@@ -46,4 +46,7 @@ def get_user_input(user_prompt: str, expected_type: type) -> list:
     return outbox
 
 value = get_user_input("Please enter your favorite number: ", int)
+
+value = get_user_input("Please enter your second favorite number: ", int)
+
 print(value)
