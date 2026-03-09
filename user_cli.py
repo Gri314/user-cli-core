@@ -5,8 +5,10 @@
 
 import utils as u
 
-## instantiate necessary commands before operation
+# Hardcoded commands that need to always work
 syst_commands = u.command_builder()
+BREAK_THIS_LOOP = u.commands.escape_keyphrase
+QUIT_ALL = u.commands.quit_keyphrase
 
 # Functions
 
@@ -21,7 +23,8 @@ def say(prompt: str, speaker = "ARBY") -> None:
 def command_checker(user_prompt: str) -> str:
     outbox = input(f"<ARBY>: {user_prompt}\n<USER>: ")
     command = u.grab_subphrase(outbox, "--")
-    if command: syst_commands.execute(command)
+    if command: 
+        outbox = syst_commands.execute(command)
     
     return outbox
 
@@ -40,13 +43,14 @@ def get_user_input(user_prompt: str, expected_type: type) -> list:
                 outbox = expected_type(outbox)
                 break
             except:
+                if outbox == BREAK_THIS_LOOP:
+                    return None
                 say(f"This response cannot be casted to type {expected_type}.")
             
     
     return outbox
 
-value = get_user_input("Please enter your favorite number: ", int)
+### program scripting
 
-value = get_user_input("Please enter your second favorite number: ", int)
-
+value = get_user_input("Fuck you ", int)
 print(value)
