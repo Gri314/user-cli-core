@@ -13,12 +13,27 @@ def does_file_exist_here(file_location: str, file_name: str) -> bool:
     except FileNotFoundError:
         return False
 
+## get the number of lines in a file
+## can "safely" check very large files
+def get_number_of_lines(file_location: str, file_name: str) -> int:
+    if not does_file_exist_here(file_location, file_name):
+        return None
+    try:
+        with open(file_location + "\\" + file_name, 'r') as file:
+            outbox = sum(1 for line in file)
+        return outbox
+    except Exception:
+        return None
+    
 ## checks for a files' existence, then writes a message to a new file if it doesn't
 ## returns True if it worked, False if it didn't
 def create_new_file(file_location: str, file_name: str, optional_initial_message = "") -> bool:
     if does_file_exist_here(file_location, file_name):
         return None
     try:
+        if optional_initial_message != "":
+            if not "\n" in optional_initial_message:
+                optional_initial_message = optional_initial_message + "\n"
         with open(file_location + "\\" + file_name, 'w') as file:
             file.write(optional_initial_message)
     except Exception:
@@ -34,21 +49,69 @@ def read_line(file_location: str, file_name: str, line_number: int) -> str:
             i = 0
             for line in file:
                 if line_number == i:
+                    file.close()
                     return line
                 i = i + 1
-            return None
+        ## Never reached the desired line
+        return None
     except Exception:
         return None
 
-## overwrite a specific line of a file
-## returns None if the file does not exist
-## returns True if it worked, false if it didn't (for example, line did not exist)
-def write_line(file_location: str, file_name: str, line_number: int, leave_input_untouched = False) -> bool:
+## add lines at the end of a file, using the \n newline character
+def append_lines(file_location: str, file_name: str, lines_to_append: list[str], include_newline = True) -> bool:
+    if not does_file_exist_here(file_location, file_name):
+        return None
+    try:
+        ## first, check if the last line of the file 
+        newline_character = "\n" if include_newline else " "
+        with open(file_location + "\\" + file_name, 'a') as file:
+            for line in lines_to_append:
+                file.write(line + newline_character)
+    except Exception:
+        return None
+
+## read all lines up to the given number 
+## READS ALL these lines into memory
+def read_up_to_line(file_location: str, file_name: str, line_number: int):
+    if not does_file_exist_here(file_location, file_name):
+        return ":: error noFileDetected"
+    try:
+        with open(file_location + "\\" + file_name, 'r') as file:
+            i = 0
+            outbox = ["" for k in range(0, line_number+1)] 
+            for line in file:
+                print(i)
+                print(line)
+                outbox[i] = line
+                if line_number == i:
+                    file.close()
+                    return outbox
+                i = i+1
+        ## there were not enough lines in the file
+        return ":: error notEnoughLines"
+    except Exception:
+        return ":: error otherException"
+
+## overwrite a certain line in a file
+## TRIES TO READ ENTIRE FILE INTO MEMORY
+def replace_line(file_location: str, file_name: str, line_number: int, replacement_text: str) -> str:
     if not does_file_exist_here(file_location, file_name):
         return None
     try:
         with open(file_location + "\\" + file_name, 'r+') as file:
-            i = 0
-            for line in file:
-                if line_number == i:
-                    
+            lines = file.readlines()
+            i, flag = 0, False
+            for line in lines:
+                if i == line_number:
+                    flag = True
+                    break
+                i = i + 1
+            if not flag:
+                return ":: error NotEnoughLines"
+            
+            if "\n" not in replacement_text:
+                replacement_text = replacement_text + "\n"
+            lines[line_number] = replacement_text
+        return ":: success"
+    except Exception:
+        return ":: error OtherException"
