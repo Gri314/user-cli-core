@@ -49,8 +49,3 @@ def get_user_input(user_prompt: str, expected_type: type) -> list:
             
     
     return outbox
-
-### program scripting
-
-value = get_user_input("Fuck you ", int)
-print(value)
