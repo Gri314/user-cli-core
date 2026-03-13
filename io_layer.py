@@ -36,6 +36,7 @@ def create_new_file(file_location: str, file_name: str, optional_initial_message
                 optional_initial_message = optional_initial_message + "\n"
         with open(file_location + "\\" + file_name, 'w') as file:
             file.write(optional_initial_message)
+        return True
     except Exception:
         return False
 
@@ -62,7 +63,6 @@ def append_lines(file_location: str, file_name: str, lines_to_append: list[str],
     if not does_file_exist_here(file_location, file_name):
         return None
     try:
-        ## first, check if the last line of the file 
         newline_character = "\n" if include_newline else " "
         with open(file_location + "\\" + file_name, 'a') as file:
             for line in lines_to_append:
@@ -80,8 +80,6 @@ def read_up_to_line(file_location: str, file_name: str, line_number: int):
             i = 0
             outbox = ["" for k in range(0, line_number+1)] 
             for line in file:
-                print(i)
-                print(line)
                 outbox[i] = line
                 if line_number == i:
                     file.close()
@@ -115,3 +113,15 @@ def replace_line(file_location: str, file_name: str, line_number: int, replaceme
         return ":: success"
     except Exception:
         return ":: error OtherException"
+    
+## Read the entire file into memory as a list, with no newline chars
+def read_all(file_location: str, file_name: str) -> list[str]:
+    if not does_file_exist_here(file_location, file_name):
+        return None
+    try:
+        with open(file_location + "\\" + file_name, 'r') as file:
+            lines = file.readlines()
+        return lines
+    except Exception:
+        return ["err: OtherException (file too large?)"]
+    
