@@ -31,7 +31,7 @@ def grab_subphrase(phrase: str, key: str, max_length = None) -> str:
     if not key in phrase:
         return None ## specified key was not present, handles 1 expection
     if max_length:
-        ## do something
+        pass
     else:
         max_length = len(phrase)
     return phrase[ phrase.index(key) + len(key):max_length ] ## return everything after the key, up to max length
@@ -69,6 +69,15 @@ def pull_var_from_file(file_location, file_name, variable_name, expected_type):
                 break
     else:
         ## grab the index from the string associated with var
+        ### find all the commas and get the substring containing var_name
+        commas = [i for i, char in enumerate(lines[1]) if char == ',']
+        index = lines[1].index(variable_name)
+        for i in range(0, len(commas)):
+            if commas[i] > index:
+                commas = commas[i]
+                break
+        temp = grab_subphrase(lines[index], variable_name)
+        return temp
         
 
 # Creation and Editing of Log Files
