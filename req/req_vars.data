@@ -1,0 +1,4 @@
+# description: Required Variables: All needed during runtime
+{ last_opened: 2, version: 3 }
+last_opened: None
+version: 0.2
