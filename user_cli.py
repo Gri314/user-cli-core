@@ -6,9 +6,6 @@
 import utils as u
 import commands as c
 
-# Command mapping to actual functions
-
-
 # Program Opening Script
 
 c.say("Getting started...")
@@ -17,3 +14,5 @@ version = u.pull_var_from_file(u.getcwd() + "\\req", "req_vars.data", "version",
 c.say(f"System ready at version {version}.")
 
 value = c.get_user_input("Welcome. What is your first command?", str)
+
+from os import getcwd
