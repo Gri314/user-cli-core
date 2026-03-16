@@ -16,4 +16,4 @@ u.initialize_reqfile()
 version = u.pull_var_from_file(u.getcwd() + "\\req", "req_vars.data", "version", float)
 c.say(f"System ready at version {version}.")
 
-value = c.get_user_input("How many moons does Jupiter have?", int)
+value = c.get_user_input("Welcome. What is your first command?", str)

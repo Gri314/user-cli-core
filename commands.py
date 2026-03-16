@@ -3,25 +3,6 @@
 
 import utils as u
 
-# list of commands instanceable anywhere
-# this allows for the definition of new user commands at runtime
-class command_builder:
-    def __init__(self):
-        self.command_list = {
-            ## hardcoded commands
-            "esc": escape,
-            "quit": quit,
-            "new_file": create_new_file
-        }
-    
-    def update(self):
-        ## use the io layer to grab .json input
-        ## add these commands to the list
-        return None
-    
-    def execute(self, command: str):
-        return self.command_list[command]()
-
 # Hardcoded, Unchanging Commands
 ## The user should not edit these ##
 
@@ -68,9 +49,43 @@ def get_user_input(user_prompt: str, expected_type: type) -> list:
                 outbox = expected_type(outbox)
                 break
             except:
-                if outbox == BREAK_THIS_LOOP:
+                if outbox == escape_keyphrase:
                     return None
                 say(f"This response cannot be casted to type {expected_type}.")
             
     
     return outbox
+
+def user_create_new_file():
+    say("Preparing to create a new file.")
+    filename = get_user_input("What would you like to name this file?", str)
+    if not "." in filename:
+        extension = get_user_input("What extension should this file have?", str)
+        filename = filename + extension
+        del extension
+    value = get_user_input("Should this file appear outside the default `user_files` folder?", str)
+    if "Y" in value or "y" in value:
+        filepath = get_user_input("Please state the new file path."
+
+
+
+# list of commands instanceable anywhere
+# this allows for the definition of new user commands at runtime
+class command_builder:
+    def __init__(self):
+        self.command_list = {
+            ## hardcoded commands
+            "esc": escape,
+            "quit": quit,
+            "new_file": user_create_new_file
+        }
+    
+    def update(self):
+        ## use the io layer to grab .json input
+        ## add these commands to the list
+        return None
+    
+    def execute(self, command: str):
+        return self.command_list[command]()
+
+syst_commands = command_builder()  
