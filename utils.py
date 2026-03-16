@@ -87,7 +87,7 @@ log_number = 0
 def get_logtime() -> str:
     timenow = localtime()
     outbox = ""
-    for i in range(0, len(timenow)-2):
+    for i in range(0, 3):
         outbox = outbox + "." + str(timenow[i])
     return outbox
 
@@ -96,7 +96,6 @@ def create_new_log(log_name: str, initial_line: str) -> tuple:
     path = getcwd() + "\\logs"
     file = log_name + timenow + ".txt"
     io.create_new_file(path, file, f"# Log Number: {log_number} @ {timenow}" + " Descriptor: " + initial_line)
-    
     return (path, file)
 
 def log_to(log_location: str, log_name: str, message_author: str, log_message: str):
@@ -105,3 +104,13 @@ def log_to(log_location: str, log_name: str, message_author: str, log_message: s
     outbox_message = outbox_message + log_message
     outbox = io.append_lines(log_location, log_name, [outbox_message])
     return outbox
+
+def log_this(log_message: str, message_author: str):
+    ## check if a log has already been made today
+    path = getcwd() + "\\logs"
+    file = message_author + get_logtime() + ".txt"
+    if not io.does_file_exist_here(path, file):
+        create_new_log(message_author, f"This log was automatically generated using `utils.log_this`.")
+    
+    ## log the message to this location
+    log_to(path, file, message_author, log_message)
