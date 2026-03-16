@@ -4,38 +4,18 @@
 from time import localtime
 from os import getcwd
 
-import commands
 import io_layer as io
-
-# list of commands instanceable anywhere
-# this allows for the definition of new user commands at runtime
-class command_builder:
-    def __init__(self):
-        self.command_list = {
-            ## hardcoded commands
-            "esc": commands.escape,
-            "quit": commands.quit,
-            "new_file": commands.create_new_file
-        }
-    
-    def update(self):
-        ## use the io layer to grab .json input
-        ## add these commands to the list
-        return None
-    
-    def execute(self, command: str):
-        return self.command_list[command]()
 
 # Search after keyphrase through a string
 ## returns everything after the given command key
 def grab_subphrase(phrase: str, key: str, max_length = None) -> str:
     if not key in phrase:
         return None ## specified key was not present, handles 1 expection
-    if max_length:
-        pass
+    phrase = phrase[phrase.index(key) + len(key):]
+    if not max_length:
+        return phrase
     else:
-        max_length = len(phrase)
-    return phrase[ phrase.index(key) + len(key):max_length ] ## return everything after the key, up to max length
+        return phrase[:max_length]
 
 # Reading variables from files into memory
 
