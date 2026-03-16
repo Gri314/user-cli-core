@@ -14,7 +14,8 @@ class command_builder:
         self.command_list = {
             ## hardcoded commands
             "esc": commands.escape,
-            "quit": commands.quit
+            "quit": commands.quit,
+            "new_file": commands.create_new_file
         }
     
     def update(self):
@@ -38,7 +39,26 @@ def grab_subphrase(phrase: str, key: str, max_length = None) -> str:
 
 # Reading variables from files into memory
 
-## Initialize the required_variables file
+## grab just the value after a variable name in a string
+def grab_sub_value(phrase, variable_name, expected_type):
+    value = phrase.index(variable_name)
+    phrase = phrase[(value + len(variable_name)):]
+    if "," in phrase:
+        phrase = phrase[0:phrase.index(',')]
+    if ":" in phrase:
+        phrase = phrase[1:]
+    if "\n" in phrase:
+        phrase = phrase[:-2]
+    if "}" in phrase:
+        phrase = phrase[:-1]
+    
+    try:
+        outbox = expected_type(phrase)
+    except Exception:
+        return f"err: Locating varible: varaible location {phrase} to type {expected_type}."
+    return outbox
+
+## initialize the required varaibles file necessary for all work to be done
 ## which contains saved information so the program can run next time
 def initialize_reqfile() -> str:
     directory = getcwd() + "\\req"
@@ -51,8 +71,9 @@ def initialize_reqfile() -> str:
         if values != None:
             return "fail: File nonempty"
     initial_data = [
-        "{ last_opened: 2 }",
-        "last_opened: None"
+        "{ last_opened: 2, version: 3}",
+        "last_opened: None",
+        "version: 0.2"
     ]
     io.append_lines(directory, filename, initial_data)
     return "succ: Initialized fully."
@@ -68,17 +89,14 @@ def pull_var_from_file(file_location, file_name, variable_name, expected_type):
                 index = i
                 break
     else:
-        ## grab the index from the string associated with var
-        ### find all the commas and get the substring containing var_name
-        commas = [i for i, char in enumerate(lines[1]) if char == ',']
-        index = lines[1].index(variable_name)
-        for i in range(0, len(commas)):
-            if commas[i] > index:
-                commas = commas[i]
-                break
-        temp = grab_subphrase(lines[index], variable_name)
-        return temp
-        
+        index = grab_sub_value(lines[1], variable_name, int)
+    
+    ## now that index is held, seek the value in this line of the file
+    try:
+        outbox = grab_sub_value(lines[index].strip(), variable_name, expected_type)
+    except Exception:
+        return f"err: could not find {index} lines in the file."
+    return outbox
 
 # Creation and Editing of Log Files
 

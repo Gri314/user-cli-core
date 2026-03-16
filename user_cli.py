@@ -49,3 +49,10 @@ def get_user_input(user_prompt: str, expected_type: type) -> list:
             
     
     return outbox
+
+# Program Opening Script
+
+say("Getting started...")
+u.initialize_reqfile()
+version = u.pull_var_from_file(u.getcwd() + "\\req", "req_vars.data", "version", float)
+say(f"System ready at version {version}.")
