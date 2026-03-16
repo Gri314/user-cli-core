@@ -2,6 +2,7 @@
 ## could be editable by user, maybe?
 
 import utils as u
+import io_layer as io
 
 # Hardcoded, Unchanging Commands
 ## The user should not edit these ##
@@ -65,7 +66,31 @@ def user_create_new_file():
         del extension
     value = get_user_input("Should this file appear outside the default `user_files` folder?", str)
     if "Y" in value or "y" in value:
-        filepath = get_user_input("Please state the new file path."
+        filepath = get_user_input("Please state the new file path.", str)
+    else:
+        filepath = u.getcwd() + "\\user_files"
+    optional_arg = get_user_input("Should the file start with some text already in it?", str)
+    if "Y" in optional_arg or "y" in optional_arg:
+        optional_arg = get_user_input("What text should go at the beginning of this file?", str)
+    else:
+        optional_arg = ""
+    say(f"Creating the file `{filename}` at location `...{filepath[-12:]}`.")
+    output = io.create_new_file(filepath, filename, optional_arg)
+    if output:
+        say("File creation succeeded.")
+    else:
+        say("Some error occurred in the file creation.") 
+    value = get_user_input("Should I make a log of this event?", str)
+    if "Y" in value or "y" in value:
+        if output:
+            u.log_this(f"User created file `{filename}` at location `{filepath}` successfully.", "SYST")
+        else:
+            u.log_this(f"User attempted to create the file `{filename}` in location `{filepath}` due to {output}.")
+    else:
+        if output:
+            return 1
+        else:
+            return 0
 
 
 
